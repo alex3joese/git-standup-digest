@@ -43,4 +43,16 @@ export function resetConfig() {
   }
 }
 
+/**
+ * Returns the current config value for a single key, falling back to the default.
+ * Throws if the key is not a recognized config option.
+ */
+export function getConfigValue(key) {
+  if (!(key in DEFAULTS)) {
+    throw new Error(`Unknown config key: "${key}". Valid keys are: ${Object.keys(DEFAULTS).join(', ')}`);
+  }
+  const config = loadConfig();
+  return config[key];
+}
+
 export { DEFAULTS };
