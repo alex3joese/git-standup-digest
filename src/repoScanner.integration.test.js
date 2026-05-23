@@ -15,6 +15,16 @@ function initGitRepo(dir, name) {
   return repoPath;
 }
 
+/**
+ * Cleans up a list of temporary directories created during a test.
+ * Useful when a test creates extra tmp dirs beyond the main workspace.
+ */
+function cleanupDirs(...dirs) {
+  for (const dir of dirs) {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 describe('repoScanner integration', () => {
   let workspace;
 
@@ -50,7 +60,7 @@ describe('repoScanner integration', () => {
     expect(repos).toContain(path.resolve(repoB));
     expect(repos).toContain(path.resolve(repoC));
 
-    fs.rmSync(second, { recursive: true, force: true });
+    cleanupDirs(second);
   });
 
   it('explicit repo paths are included even outside scan dirs', () => {
@@ -60,6 +70,6 @@ describe('repoScanner integration', () => {
     const repos = resolveRepoPaths([workspace], [standalone]);
     expect(repos).toContain(path.resolve(standalone));
 
-    fs.rmSync(standalone, { recursive: true, force: true });
+    cleanupDirs(standalone);
   });
 });
