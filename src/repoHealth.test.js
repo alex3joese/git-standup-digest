@@ -43,12 +43,18 @@ describe('countMergeCommits', () => {
     ];
     expect(countMergeCommits(commits)).toBe(2);
   });
+  it('returns 0 for empty array', () => {
+    expect(countMergeCommits([])).toBe(0);
+  });
 });
 
 describe('countVagueCommits', () => {
   it('counts correctly', () => {
     const commits = [makeCommit('wip'), makeCommit('add user auth'), makeCommit('temp')];
     expect(countVagueCommits(commits)).toBe(2);
+  });
+  it('returns 0 for empty array', () => {
+    expect(countVagueCommits([])).toBe(0);
   });
 });
 
@@ -64,6 +70,12 @@ describe('computeHealthScore', () => {
     const commits = [makeCommit('wip'), makeCommit('wip'), makeCommit('add feature')];
     expect(computeHealthScore(commits)).toBeLessThan(100);
   });
+  it('returns a number between 0 and 100', () => {
+    const commits = [makeCommit('wip'), makeCommit('temp'), makeCommit('misc'), makeCommit('fix')];
+    const score = computeHealthScore(commits);
+    expect(score).toBeGreaterThanOrEqual(0);
+    expect(score).toBeLessThanOrEqual(100);
+  });
 });
 
 describe('buildHealthReport', () => {
@@ -75,5 +87,10 @@ describe('buildHealthReport', () => {
     expect(report).toHaveProperty('vagueCount', 1);
     expect(report).toHaveProperty('score');
     expect(['good', 'fair', 'poor']).toContain(report.rating);
+  });
+  it('rates all-clean commits as good', () => {
+    const commits = [makeCommit('implement search feature'), makeCommit('fix pagination bug')];
+    const report = buildHealthReport(commits);
+    expect(report.rating).toBe('good');
   });
 });
