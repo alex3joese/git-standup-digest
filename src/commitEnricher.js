@@ -56,3 +56,19 @@ export function formatSummaryLine(stats) {
   }
   return parts.join(' — ');
 }
+
+/**
+ * Groups a flat list of enriched commits by their repo field.
+ * Returns a Map of repoName -> commit[].
+ */
+export function groupCommitsByRepo(commits) {
+  const groups = new Map();
+  for (const commit of commits) {
+    const key = commit.repo ?? 'unknown';
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
+    groups.get(key).push(commit);
+  }
+  return groups;
+}
