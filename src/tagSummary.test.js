@@ -17,6 +17,11 @@ describe('formatTagSection', () => {
     const result = formatTagSection('unknown', [{ cleanMessage: 'something' }]);
     expect(result).toContain('📌 unknown');
   });
+
+  it('returns empty string for empty commits array', () => {
+    const result = formatTagSection('feat', []);
+    expect(result).toBe('');
+  });
 });
 
 describe('buildTagSummary', () => {
@@ -55,6 +60,13 @@ describe('buildTagSummary', () => {
     const result = buildTagSummary(commits);
     expect(result).toContain('📌 Other');
     expect(result).toContain('initial commit');
+  });
+
+  it('does not include sections for tags with no commits', () => {
+    const commits = [{ message: 'feat: only feature' }];
+    const result = buildTagSummary(commits);
+    expect(result).not.toContain('🐛 Bug Fixes');
+    expect(result).not.toContain('🔧 Chores');
   });
 });
 
