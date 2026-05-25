@@ -5,6 +5,11 @@ const { handleTopAuthorsCommand } = require('./topAuthorsCommand');
 
 const makeCommit = (author, message = 'fix: patch') => ({ author, message, hash: Math.random().toString(36).slice(2) });
 
+/**
+ * Helper to capture and join all console.log output from a command invocation.
+ */
+const getOutput = () => logSpy.mock.calls.map(c => c[0]).join('\n');
+
 let logSpy;
 beforeEach(() => { logSpy = jest.spyOn(console, 'log').mockImplementation(() => {}); });
 afterEach(() => { logSpy.mockRestore(); });
@@ -17,7 +22,7 @@ describe('handleTopAuthorsCommand integration', () => {
       ...Array(2).fill(null).map(() => makeCommit('Eve'))
     ];
     handleTopAuthorsCommand(commits, { n: 3 });
-    const output = logSpy.mock.calls.map(c => c[0]).join('\n');
+    const output = getOutput();
     expect(output).toContain('Carol');
     expect(output).toContain('Dave');
     expect(output).toContain('Eve');
@@ -40,7 +45,7 @@ describe('handleTopAuthorsCommand integration', () => {
   it('handles single author with 100 percent', () => {
     const commits = Array(5).fill(null).map(() => makeCommit('Solo'));
     handleTopAuthorsCommand(commits, { n: 5 });
-    const output = logSpy.mock.calls.map(c => c[0]).join('\n');
+    const output = getOutput();
     expect(output).toContain('100%');
   });
 });
